@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8d7dc" />
+  <title>Untuk Mamah Tersayang</title>
+  <style>
+    /* EDIT WARNA DI SINI */
+    :root {
+      --pink-50: #fff8fb;
+      --pink-100: #fdf1f5;
+      --pink-200: #f7dfe8;
+      --pink-300: #f1c4d5;
+      --pink-400: #e8a3bb;
+      --pink-500: #d87d9b;
+      --peach: #f7d9c8;
+      --cream: #fffaf2;
+      --gold: #d8b36a;
+      --rose: #b75d7d;
+      --text: #5d4350;
+      --text-soft: #7d5f6a;
+      --white: #ffffff;
+      --shadow: rgba(149, 93, 114, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255,255,255,0.8) 0, transparent 22%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.5) 0, transparent 24%),
+        linear-gradient(145deg, var(--pink-50), var(--cream) 38%, var(--pink-100));
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::before {
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.9) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 40% 76%, rgba(255,255,255,0.6) 0 1.5px, transparent 2.4px),
+        radial-gradient(circle at 75% 36%, rgba(255,255,255,0.75) 0 1.1px, transparent 2.1px),
+        radial-gradient(circle at 90% 68%, rgba(255,255,255,0.7) 0 1.3px, transparent 2.3px);
+      opacity: 0.9;
+      animation: twinkle 7s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.06),
+        rgba(255,255,255,0)
+      );
+      backdrop-filter: blur(1px);
+    }
+
+    .petals,
+    .ambient-effects,
+    .final-petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .petal {
+      position: absolute;
+      top: -15%;
+      width: 12px;
+      height: 16px;
+      border-radius: 100% 0 100% 0;
+      background: linear-gradient(135deg, rgba(255, 212, 224, 0.9), rgba(255, 160, 185, 0.5));
+      opacity: 0.5;
+      transform: rotate(45deg);
+      animation: fall linear infinite;
+    }
+
+    .petal:nth-child(odd) {
+      background: linear-gradient(135deg, rgba(250, 214, 160, 0.8), rgba(255, 183, 196, 0.5));
+    }
+
+    .petal:nth-child(3n) {
+      width: 9px;
+      height: 13px;
+    }
+
+    .love-rain,
+    .bloom-rain,
+    .sparkle-rain {
+      position: absolute;
+      inset: -10% 0 0;
+    }
+
+    .love-drop,
+    .bloom,
+    .sparkle {
+      position: absolute;
+      top: -12%;
+      opacity: 0;
+      animation-name: ambient-fall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    .love-drop {
+      font-size: clamp(0.7rem, 2vw, 1.2rem);
+      animation-duration: 10s;
+      filter: drop-shadow(0 0 8px rgba(255, 137, 176, 0.45));
+    }
+
+    .bloom {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, #ffd4df 35%, #f1a9c0 60%, #d98ca8 100%);
+      box-shadow: 0 0 8px rgba(255, 178, 209, 0.35);
+      animation-duration: 11s;
+    }
+
+    .sparkle {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 20px rgba(255,211,103,0.7);
+      animation-duration: 6s;
+    }
+
+    .container {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+
+    .screen {
+      min-height: calc(100vh - 56px);
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateY(24px);
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      padding: 32px 20px 56px;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .card {
+      width: min(100%, 620px);
+      background: rgba(255,255,255,0.42);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 18px 50px var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 32px;
+      padding: clamp(24px, 7vw, 52px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -60px;
+      top: -90px;
+      background: radial-gradient(circle, rgba(255,255,255,0.7), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      color: var(--rose);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    .title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.1rem, 7vw, 4.2rem);
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      margin: 20px 0 14px;
+      color: var(--rose);
+      text-shadow: 0 4px 12px rgba(183,93,125,0.1);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 3.7vw, 1.26rem);
+      line-height: 1.7;
+      color: var(--text-soft);
+      margin: 0 auto 28px;
+      max-width: 30ch;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 16px 28px;
+      min-height: 52px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--pink-500), var(--rose), #d99f9b);
+      box-shadow: 0 12px 25px rgba(183,93,125,0.22);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+      touch-action: manipulation;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 16px 30px rgba(183,93,125,0.28);
+      filter: saturate(1.05);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .btn.secondary {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(183,93,125,0.15);
+      color: var(--rose);
+      box-shadow: none;
+    }
+
+    .floating-icons {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-icons span {
+      position: absolute;
+      font-size: clamp(1.1rem, 4vw, 1.8rem);
+      opacity: 0.6;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .floating-icons span:nth-child(1) { left: 9%; top: 18%; animation-delay: 0s; }
+    .floating-icons span:nth-child(2) { right: 13%; top: 12%; animation-delay: 1s; }
+    .floating-icons span:nth-child(3) { left: 14%; bottom: 22%; animation-delay: 2s; }
+    .floating-icons span:nth-child(4) { right: 18%; bottom: 15%; animation-delay: 3s; }
+
+    .gift-stage {
+      max-width: 470px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .gift-box {
+      position: relative;
+      width: min(82vw, 300px);
+      height: min(82vw, 300px);
+      margin: 28px auto 22px;
+      cursor: pointer;
+      transition: transform 0.35s ease;
+      touch-action: manipulation;
+      filter: drop-shadow(0 24px 30px rgba(183,93,125,0.18));
+    }
+
+    .gift-box:hover { transform: translateY(-2px); }
+
+    .gift-box .box-shell {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #f6d6df, #e7a5b8 30%, #d67d99 100%);
+      border: 3px solid rgba(255,255,255,0.8);
+      overflow: hidden;
+    }
+
+    .gift-box .box-shell::before,
+    .gift-box .box-shell::after {
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.7);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
+    }
+
+    .gift-box .box-shell::before {
+      left: 50%;
+      top: 0;
+      width: 18px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+
+    .gift-box .box-shell::after {
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 18px;
+      transform: translateY(-50%);
+    }
+
+    .gift-box .lid {
+      position: absolute;
+      inset: -8px 0 auto;
+      height: 48%;
+      border-radius: 28px 28px 18px 18px;
+      background: linear-gradient(135deg, #fce5ee, #e8a2ba 50%, #d7799a);
+      border: 3px solid rgba(255,255,255,0.8);
+      transform-origin: center bottom;
+      transition: transform 1.1s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+      z-index: 2;
+    }
+
+    .gift-box .lid::before,
+    .gift-box .lid::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 18px;
+      background: rgba(255,255,255,0.75);
+    }
+
+    .gift-box .lid::after {
+      inset: 0 0 auto;
+      height: 16px;
+    }
+
+    .gift-box.opened .lid {
+      transform: rotateX(116deg) translateY(-24px);
+      opacity: 0.4;
+      filter: brightness(0.94);
+    }
+
+    .gift-box .ribbon {
+      position: absolute;
+      inset: 10px;
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .gift-box .ribbon::before,
+    .gift-box .ribbon::after {
+      content: "";
+      position: absolute;
+      background: linear-gradient(180deg, var(--gold), #f3dd9d);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+    }
+
+    .gift-box .ribbon::before {
+      left: calc(50% - 9px);
+      top: 0;
+      width: 18px;
+      height: 100%;
+    }
+
+    .gift-box .ribbon::after {
+      top: calc(50% - 9px);
+      left: 0;
+      width: 100%;
+      height: 18px;
+    }
+
+    .gift-box .gift-text {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 4;
+      font-size: clamp(0.95rem, 3vw, 1.3rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 2px 10px rgba(122,54,82,0.25);
+      letter-spacing: 0.04em;
+    }
+
+    .gift-box.opened .gift-text {
+      display: none;
+    }
+
+    .shine {
+      position: absolute;
+      inset: -15%;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,0.8) 49%, transparent 56%);
+      transform: rotate(-17deg) translateX(-80%);
+      animation: shine 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .confetti-layer,
+    .heart-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti,
+    .heart {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      animation: burst 1.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .confetti {
+      width: 8px;
+      height: 14px;
+      border-radius: 3px;
+      transform: translate(-50%, -50%) rotate(var(--rotation));
+      background: var(--color, var(--gold));
+      box-shadow: 0 0 10px rgba(216,179,106,0.4);
+    }
+
+    .heart {
+      font-size: 1.2rem;
+      filter: drop-shadow(0 0 8px rgba(255,130,170,0.4));
+      animation: love-pop 1.7s ease-out forwards;
+    }
+
+    .photo-story {
+      display: grid;
+      gap: 18px;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: min(100%, 430px);
+      margin: 0 auto;
+      padding: 12px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(255,228,236,0.9));
+      border: 1px solid rgba(255,255,255,0.85);
+      box-shadow: 0 18px 40px rgba(180,101,140,0.12);
+      overflow: hidden;
+    }
+
+    .photo-slide {
+      display: none;
+      animation: photoFade 0.55s ease;
+    }
+
+    .photo-slide.active {
+      display: block;
+    }
+
+    .photo-frame::before,
+    .photo-frame::after {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: rgba(183,93,125,0.18);
+      border-style: solid;
+    }
+
+    .photo-frame::before {
+      left: 14px;
+      top: 14px;
+      border-width: 3px 0 0 3px;
+      border-radius: 14px 0 0 0;
+    }
+
+    .photo-frame::after {
+      right: 14px;
+      bottom: 14px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 14px 0;
+    }
+
+    .photo-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border-radius: 22px;
+      background: #f6dfe8;
+    }
+
+    .photo-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      color: var(--rose);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .photo-number {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(183,93,125,0.1);
+    }
+
+    .photo-copy {
+      min-height: 120px;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      margin: 0 auto;
+      max-width: 44ch;
+    }
+
+    .photo-copy h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      color: var(--rose);
+    }
+
+    .photo-copy p {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.75;
+      font-size: clamp(0.97rem, 3.4vw, 1.1rem);
+    }
+
+    .story-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .story-controls .btn {
+      padding-inline: 20px;
+    }
+
+    .story-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 8px 0 0;
+    }
+
+    .story-dots button {
+      width: 10px;
+      height: 10px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(183,93,125,0.25);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .story-dots button.active {
+      background: var(--pink-500);
+      transform: scale(1.15);
+    }
+
+    .message {
+      max-width: 36ch;
+      margin: 0 auto;
+      font-size: clamp(1rem, 3.6vw, 1.22rem);
+      line-height: 1.75;
+      color: var(--text-soft);
+    }
+
+    .message strong {
+      color: var(--rose);
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .music-toggle {
+      position: fixed;
+      right: 18px;
+      bottom: 20px;
+      z-index: 30;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      color: var(--rose);
+      box-shadow: 0 10px 25px rgba(183,93,125,0.12);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .nav-back {
+      position: fixed;
+      left: 18px;
+      bottom: 20px;
+      z-index: 25;
+      min-width: 50px;
+      min-height: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.7);
+      color: var(--rose);
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      backdrop-filter: blur(12px);
+      touch-action: manipulation;
+    }
+
+    .nav-back.visible { display: block; }
+
+    .envelope-wrap {
+      width: min(100%, 480px);
+      margin: 26px auto 18px;
+      perspective: 1500px;
+    }
+
+    .envelope {
+      position: relative;
+      width: min(90vw, 440px);
+      height: min(72vw, 290px);
+      margin: 0 auto;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #f6d7de, #f1c0d4);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 20px 35px rgba(180,101,140,0.12);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease;
+      touch-action: manipulation;
+    }
+
+    .envelope::before,
+    .envelope::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.18));
+      clip-path: polygon(0 0, 100% 0, 50% 56%);
+    }
+
+    .envelope::after {
+      background: linear-gradient(135deg, rgba(255,255,255,0.28), rgba(255,255,255,0.1));
+      clip-path: polygon(0 100%, 50% 56%, 100% 100%);
+    }
+
+    .envelope.open {
+      transform: rotateY(180deg);
+    }
+
+    .letter {
+      position: absolute;
+      inset: 12% 9%;
+      padding: clamp(20px, 5vw, 30px);
+      background: rgba(255,255,255,0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(183,93,125,0.12);
+      box-shadow: 0 14px 25px rgba(180,101,140,0.1);
+      color: var(--text);
+      text-align: left;
+      line-height: 1.75;
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      overflow: hidden;
+    }
+
+    .envelope.open + .letter,
+    .letter.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .letter h3 {
+      color: var(--rose);
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .letter p {
+      font-size: clamp(0.95rem, 3.3vw, 1.12rem);
+      margin-bottom: 0.6em;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fade-up 0.6s ease forwards;
+    }
+
+    .letter p:nth-child(2) { animation-delay: 0.15s; }
+    .letter p:nth-child(3) { animation-delay: 0.35s; }
+    .letter p:nth-child(4) { animation-delay: 0.55s; }
+    .letter p:nth-child(5) { animation-delay: 0.75s; }
+    .letter p:nth-child(6) { animation-delay: 0.95s; }
+    .letter p:nth-child(7) { animation-delay: 1.15s; }
+
+    .flowers {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 28px 0 20px;
+    }
+
+    .flower-card {
+      position: relative;
+      min-height: 200px;
+      padding: 18px 14px 14px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.52);
+      border-radius: 26px;
+      box-shadow: 0 14px 30px rgba(183,93,125,0.08);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      transform-style: preserve-3d;
+      touch-action: manipulation;
+      overflow: hidden;
+    }
+
+    .flower-card:hover,
+    .flower-card:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 30px rgba(183,93,125,0.12);
+    }
+
+    .flower-card .flower-face,
+    .flower-card .flower-back {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      backface-visibility: hidden;
+      transition: transform 0.7s ease, opacity 0.5s ease;
+    }
+
+    .flower-card .flower-face {
+      background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(249,220,231,0.8));
+      font-size: 3.7rem;
+      filter: drop-shadow(0 10px 16px rgba(255,167,193,0.12));
+    }
+
+    .flower-card .flower-back {
+      background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,239,244,0.96));
+      padding: 18px;
+      text-align: center;
+      transform: rotateY(180deg);
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .flower-card.open .flower-face {
+      transform: rotateY(180deg);
+      opacity: 0;
+    }
+
+    .flower-card.open .flower-back {
+      transform: rotateY(360deg);
+      opacity: 1;
+    }
+
+    .flower-card .flower-back strong {
+      display: block;
+      color: var(--rose);
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .final-card {
+      max-width: 600px;
+      padding: clamp(26px, 7vw, 60px);
+    }
+
+    .final-card .title {
+      font-size: clamp(2rem, 7vw, 3.5rem);
+      margin-bottom: 18px;
+    }
+
+    .final-card p {
+      font-size: clamp(1rem, 3vw, 1.18rem);
+      line-height: 1.8;
+      max-width: 38ch;
+      margin: 0 auto 10px;
+      color: var(--text-soft);
+    }
+
+    .signature {
+      margin-top: 22px;
+      font-weight: 700;
+      color: var(--rose);
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+    }
+
+    .final-petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .final-petals .petal {
+      width: 15px;
+      height: 20px;
+      border-radius: 100% 0 100% 0;
+      opacity: 0.75;
+      background: linear-gradient(135deg, rgba(255,209,227,0.8), rgba(255,174,190,0.6));
+      animation-duration: 10s;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translate3d(0, -15vh, 0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 0.6; }
+      100% {
+        transform: translate3d(var(--drift, 60px), 110vh, 0) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-14px) rotate(6deg); }
+    }
+
+    @keyframes shine {
+      0%, 100% { transform: rotate(-17deg) translateX(-90%); opacity: 0.2; }
+      45%, 55% { opacity: 0.8; }
+      50% { transform: rotate(-17deg) translateX(90%); opacity: 0.2; }
+    }
+
+    @keyframes burst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+      }
+      15% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--rotation));
+      }
+    }
+
+    @keyframes love-pop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-8deg);
+      }
+      15% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2) rotate(8deg);
+      }
+    }
+
+    @keyframes fade-up {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes photoFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes ambient-fall {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, -12%, 0) scale(0.7) rotate(0deg);
+      }
+      10% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift, 24px), 110vh, 0) scale(1.12) rotate(360deg);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container { padding-inline: 14px; }
+      .screen { padding-inline: 12px; }
+      .card { border-radius: 26px; }
+      .flowers { gap: 10px; }
+      .flower-card { min-height: 178px; }
+      .music-toggle { right: 12px; bottom: 15px; width: 54px; height: 54px; }
+      .nav-back { left: 12px; bottom: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="petals" aria-hidden="true"></div>
+  <div class="ambient-effects" aria-hidden="true">
+    <div class="love-rain"></div>
+    <div class="bloom-rain"></div>
+    <div class="sparkle-rain"></div>
+  </div>
+  <div class="final-petals" aria-hidden="true"></div>
+
+  <main class="container">
+    <section class="screen active" id="opening" aria-labelledby="opening-title">
+      <div class="card">
+        <div class="floating-icons" aria-hidden="true">
+          <span>💖</span>
+          <span>✨</span>
+          <span>🌷</span>
+          <span>💌</span>
+        </div>
+        <span class="eyebrow">Untuk Mamah Tersayang</span>
+        <h1 class="title" id="opening-title">Untuk Mamah Tersayang <span aria-hidden="true">❤️</span></h1>
+        <p class="subtitle">Ini ada sedikit hadiah kecil untuk Mamah...</p>
+        <button class="btn" type="button" id="startButton">Mulai Hadiahnya ✨</button>
+      </div>
+    </section>
+
+    <section class="screen" id="giftSection" aria-labelledby="gift-title">
+      <div class="card gift-stage">
+        <span class="eyebrow">Hadiah Spesial</span>
+        <h2 class="title" id="gift-title" style="font-size: clamp(1.8rem, 6vw, 3rem); margin: 18px 0 10px;">Ada sesuatu untuk Mamah...</h2>
+        <div class="gift-box" id="giftBox" role="button" tabindex="0" aria-label="Buka hadiah untuk Mamah">
+          <div class="box-shell"></div>
+          <div class="lid"></div>
+          <div class="ribbon"></div>
+          <div class="shine"></div>
+          <div class="gift-text">Klik untuk membuka ✨</div>
+          <div class="confetti-layer" aria-hidden="true"></div>
+          <div class="heart-layer" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="photoSection" aria-labelledby="photo-title">
+      <div class="card">
+        <span class="eyebrow">Kenangan Manis Bersama Mamah</span>
+        <h2 class="title" id="photo-title" style="font-size: clamp(1.8rem, 6vw, 3rem); margin: 18px 0 14px;">Beberapa momen yang selalu membawa senyum 🌷</h2>
+
+        <div class="photo-story" aria-live="polite">
+          <div class="photo-slide active" data-index="0">
+            <div class="photo-frame">
+              <img src="foto_mamah/WhatsApp Image 2026-10-09 at 01.25.07.jpeg" alt="Foto Mamah tersayang" />
+            </div>
+            <div class="photo-copy">
+              <div class="photo-meta"><span class="photo-number">01</span> <span>Kenangan yang selalu tersimpan</span></div>
+              <h3>Untuk Mamah, rumah dari segala kasih.</h3>
+              <p>Dalam setiap tawamu, ada ketenangan yang membuat kami merasa aman dan dicintai. Mamah adalah tempat terbaik untuk pulang.</p>
+            </div>
+          </div>
+
+          <div class="photo-slide" data-index="1">
+            <div class="photo-frame">
+              <img src="foto_mamah/WhatsApp Image 2026-10-09 at 01.25.08.jpeg" alt="Mamah dalam momen bahagia" />
+            </div>
+            <div class="photo-copy">
+              <div class="photo-meta"><span class="photo-number">02</span> <span>Doa yang selalu mengiringi</span></div>
+              <h3>Setiap hari Mamah menjadi doa kami.</h3>
+              <p>Terima kasih untuk setiap perhatian, setiap nasihat, dan setiap doa yang Mamah panjatkan. Semuanya menjadi cahaya dalam perjalanan hidup kami.</p>
+            </div>
+          </div>
+
+          <div class="photo-slide" data-index="2">
+            <div class="photo-frame">
+              <img src="foto_mamah/WhatsApp Image 2026-10-09 at 01.25.08 (1).jpeg" alt="Mamah tersenyum hangat" />
+            </div>
+            <div class="photo-copy">
+              <div class="photo-meta"><span class="photo-number">03</span> <span>Senyum yang menghangatkan</span></div>
+              <h3>Senyum Mamah adalah hadiah terbaik.</h3>
+              <p>Saat Mamah tersenyum, dunia terasa lebih ringan. Semoga kebahagiaan selalu ada di setiap hari Mamah, seperti Mamah selalu membawa kebahagiaan untuk kami.</p>
+            </div>
+          </div>
+
+          <div class="photo-slide" data-index="3">
+            <div class="photo-frame">
+              <img src="foto_mamah/WhatsApp Image 2026-10-09 at 01.25.08 (2).jpeg" alt="Mamah dan keluarga" />
+            </div>
+            <div class="photo-copy">
+              <div class="photo-meta"><span class="photo-number">04</span> <span>Cinta yang tidak pernah berhenti</span></div>
+              <h3>Kasih Mamah selalu menjadi pelita.</h3>
+              <p>Setiap usaha, kesabaran, dan pengorbanan Mamah tidak pernah terlihat kecil. Semua itu menjadi bagian dari cinta yang sangat besar.</p>
+            </div>
+          </div>
+
+          <div class="photo-slide" data-index="4">
+            <div class="photo-frame">
+              <img src="foto_mamah/WhatsApp Image 2026-10-09 at 01.25.08 (3).jpeg" alt="Foto kebersamaan Mamah" />
+            </div>
+            <div class="photo-copy">
+              <div class="photo-meta"><span class="photo-number">05</span> <span>Momen yang akan selalu dikenang</span></div>
+              <h3>Semoga Mamah selalu bahagia.</h3>
+              <p>Mamah adalah orang yang paling berharga. Semoga hari-hari Mamah dipenuhi kesehatan, kebahagiaan, serta kasih sayang yang berlimpah.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-dots" aria-label="Pilihan slide foto"></div>
+
+        <div class="story-controls">
+          <button class="btn secondary" type="button" id="prevPhotoButton">Sebelumnya</button>
+          <button class="btn" type="button" id="nextPhotoButton">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="letterSection" aria-labelledby="letter-title">
+      <div class="card">
+        <span class="eyebrow">Surat kecil untuk Mamah</span>
+        <h2 class="title" id="letter-title" style="font-size: clamp(1.7rem, 6vw, 2.8rem); margin: 18px 0 8px;">Mamah tersayang,</h2>
+
+        <div class="envelope-wrap">
+          <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Buka surat untuk Mamah">
+            <span class="sr-only">Buka surat</span>
+          </div>
+          <article class="letter" id="letterMessage" aria-live="polite">
+            <h3>Mamah tersayang,</h3>
+            <p>Semoga di usia yang baru ini,</p>
+            <p>Mamah selalu diberikan kesehatan,</p>
+            <p>umur yang panjang,</p>
+            <p>rezeki yang luas,</p>
+            <p>hati yang tenang,</p>
+            <p>dan kebahagiaan dalam setiap hari.</p>
+            <p>Semoga Allah selalu menjaga Mamah</p>
+            <p>dan membalas semua kebaikan Mamah</p>
+            <p>dengan kebahagiaan yang jauh lebih besar.</p>
+            <p>Terima kasih sudah menjadi Mamah</p>
+            <p>yang selalu memberikan kasih sayang.</p>
+          </article>
+        </div>
+
+        <div class="button-row">
+          <button class="btn" type="button" id="showFlowerButton">Lanjutkan ✨</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="flowerSection" aria-labelledby="flower-title">
+      <div class="card">
+        <span class="eyebrow">Pilihan Mamah</span>
+        <h2 class="title" id="flower-title" style="font-size: clamp(1.8rem, 6vw, 2.9rem); margin: 18px 0 6px;">Terakhir... Mamah pilih satu bunga 🌷</h2>
+        <p class="subtitle" style="margin-bottom: 8px;">Setiap bunga membawa doa yang spesial untuk Mamah.</p>
+
+        <div class="flowers" aria-live="polite">
+          <button class="flower-card" type="button" data-message="Mamah selalu punya tempat spesial di hati ❤️" aria-label="Pilih bunga pertama">
+            <span class="flower-face" aria-hidden="true">🌼</span>
+            <span class="flower-back"><strong>Bunga 1</strong>Mamah selalu punya tempat spesial di hati ❤️</span>
+          </button>
+
+          <button class="flower-card" type="button" data-message="Semoga hari-hari Mamah selalu dipenuhi kebahagiaan 🌷" aria-label="Pilih bunga kedua">
+            <span class="flower-face" aria-hidden="true">🌷</span>
+            <span class="flower-back"><strong>Bunga 2</strong>Semoga hari-hari Mamah selalu dipenuhi kebahagiaan 🌷</span>
+          </button>
+
+          <button class="flower-card" type="button" data-message="Semoga senyum Mamah selalu menghiasi hari-hari kami ✨" aria-label="Pilih bunga ketiga">
+            <span class="flower-face" aria-hidden="true">🌸</span>
+            <span class="flower-back"><strong>Bunga 3</strong>Semoga senyum Mamah selalu menghiasi hari-hari kami ✨</span>
+          </button>
+        </div>
+
+        <div class="button-row">
+          <button class="btn" type="button" id="finalButton" hidden>Pesan Terakhir 💌</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="finalSection" aria-labelledby="final-title">
+      <div class="card final-card">
+        <span class="eyebrow">Untuk Mamah</span>
+        <h2 class="title" id="final-title">Untuk Mamah,<br />perempuan yang paling berharga dalam hidup kami.</h2>
+        <p>Semoga Mamah selalu sehat,</p>
+        <p>panjang umur,</p>
+        <p>bahagia,</p>
+        <p>dan selalu berada dalam lindungan Allah.</p>
+        <p>Terima kasih untuk semua cinta,</p>
+        <p>kesabaran, doa, dan pengorbanan Mamah.</p>
+        <p><strong>Kami sayang Mamah. ❤️</strong></p>
+        <p class="signature">Barakallahu fii umrik, Mamah.</p>
+      </div>
+    </section>
+  </main>
+
+  <button class="nav-back" type="button" id="backButton" aria-label="Kembali">←</button>
+  <button class="music-toggle" type="button" id="musicToggle" aria-label="Matikan musik">🔇</button>
+
+  <audio id="bgMusic" loop autoplay preload="auto" playsinline>
+    <!-- MUSIK DI SINI -->
+    <source src="music/Glenn Fredly - Kasih Putih.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    /* EDIT KONFIGURASI DI SINI */
+    const config = {
+      name: "Mamah",
+      photo: "foto_mamah/WhatsApp Image 2026-10-09 at 01.25.07.jpeg",
+      music: "music/Glenn Fredly - Kasih Putih.mp3",
+      theme: {
+        primary: "#d87d9b",
+        secondary: "#f7d9c8",
+        accent: "#d8b36a"
+      }
+    };
+
+    const screens = [...document.querySelectorAll('.screen')];
+    const backButton = document.getElementById('backButton');
+    const musicToggle = document.getElementById('musicToggle');
+    const bgMusic = document.getElementById('bgMusic');
+    const startButton = document.getElementById('startButton');
+    const giftBox = document.getElementById('giftBox');
+    const showLetterButton = document.getElementById('showLetterButton');
+    const showFlowerButton = document.getElementById('showFlowerButton');
+    const finalButton = document.getElementById('finalButton');
+    const envelope = document.getElementById('envelope');
+    const letterMessage = document.getElementById('letterMessage');
+    const flowerCards = document.querySelectorAll('.flower-card');
+    const petals = document.querySelector('.petals');
+    const finalPetals = document.querySelector('.final-petals');
+    const photoImage = document.querySelector('.photo-frame img');
+    const photoSlides = [...document.querySelectorAll('.photo-slide')];
+    const photoDots = document.querySelector('.story-dots');
+    const prevPhotoButton = document.getElementById('prevPhotoButton');
+    const nextPhotoButton = document.getElementById('nextPhotoButton');
+    const openingTitle = document.getElementById('opening-title');
+    const giftTitle = document.getElementById('gift-title');
+    const flowerTitle = document.getElementById('flower-title');
+
+    const history = [];
+    let isGiftOpened = false;
+    let isLetterOpened = false;
+    let chosenFlower = null;
+    let musicReady = false;
+
+    function normalizeColor(value, fallback) {
+      return value || fallback;
+    }
+
+    function applyTheme() {
+      const root = document.documentElement;
+      root.style.setProperty('--pink-500', normalizeColor(config.theme.primary, '#d87d9b'));
+      root.style.setProperty('--peach', normalizeColor(config.theme.secondary, '#f7d9c8'));
+      root.style.setProperty('--gold', normalizeColor(config.theme.accent, '#d8b36a'));
+      root.style.setProperty('--rose', normalizeColor(config.theme.primary, '#d87d9b'));
+    }
+
+    function updateConfig() {
+      photoImage.src = config.photo;
+      photoImage.alt = `Foto ${config.name}`;
+      bgMusic.querySelector('source').src = config.music;
+      openingTitle.innerHTML = `Untuk ${config.name} Tersayang <span aria-hidden="true">❤️</span>`;
+      giftTitle.textContent = `Ada sesuatu untuk ${config.name}...`;
+      flowerTitle.textContent = `Terakhir... ${config.name} pilih satu bunga 🌷`;
+      document.title = `Untuk ${config.name} Tersayang`;
+      bgMusic.load();
+      applyTheme();
+    }
+
+    function showScreen(targetId) {
+      screens.forEach(screen => {
+        screen.classList.toggle('active', screen.id === targetId);
+      });
+
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      const hasPrevious = history.length > 0;
+      backButton.classList.toggle('visible', hasPrevious);
+    }
+
+    function goBack() {
+      const previous = history.pop();
+      if (!previous) return;
+      showScreen(previous);
+    }
+
+    function goToScreen(id) {
+      history.push(document.querySelector('.screen.active')?.id);
+      showScreen(id);
+    }
+
+    function createPetals(container, count = 16) {
+      container.innerHTML = '';
+      for (let i = 0; i < count; i += 1) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        petal.style.left = `${(Math.random() * 100)}%`;
+        petal.style.setProperty('--drift', `${(Math.random() * 120 - 60).toFixed(0)}px`);
+        petal.style.animationDelay = `${(Math.random() * 8).toFixed(2)}s`;
+        petal.style.animationDuration = `${(8 + Math.random() * 8).toFixed(2)}s`;
+        container.appendChild(petal);
+      }
+    }
+
+    function createAmbientEffects() {
+      const layers = [
+        { selector: '.love-rain', count: 18, content: '❤', className: 'love-drop' },
+        { selector: '.bloom-rain', count: 14, content: '', className: 'bloom' },
+        { selector: '.sparkle-rain', count: 22, content: '✦', className: 'sparkle' }
+      ];
+
+      layers.forEach(({ selector, count, content, className }) => {
+        const layer = document.querySelector(selector);
+        layer.innerHTML = '';
+        for (let i = 0; i < count; i += 1) {
+          const item = document.createElement('span');
+          item.className = className;
+          item.textContent = content;
+          item.style.left = `${Math.random() * 100}%`;
+          item.style.animationDelay = `${(Math.random() * 8).toFixed(2)}s`;
+          item.style.animationDuration = `${(7 + Math.random() * 8).toFixed(2)}s`;
+          item.style.setProperty('--drift', `${(Math.random() * 50 - 25).toFixed(0)}px`);
+          item.style.transform = `scale(${(0.7 + Math.random() * 0.9).toFixed(2)})`;
+          layer.appendChild(item);
+        }
+      });
+    }
+
+    function createConfetti() {
+      const layer = document.querySelector('.confetti-layer');
+      const colors = ['#f5d77a', '#f0a4b7', '#a9d8c7', '#d7b6ff', '#f3c38b', '#f6e5a9'];
+      layer.innerHTML = '';
+      for (let i = 0; i < 30; i += 1) {
+        const confetti = document.createElement('span');
+        confetti.className = 'confetti';
+        confetti.style.setProperty('--color', colors[i % colors.length]);
+        confetti.style.setProperty('--rotation', `${(Math.random() * 360).toFixed(0)}deg`);
+        confetti.style.setProperty('--x', `${(Math.random() * 200 - 100).toFixed(0)}px`);
+        confetti.style.setProperty('--y', `${(Math.random() * 180 + 80).toFixed(0)}px`);
+        layer.appendChild(confetti);
+      }
+    }
+
+    function createHearts() {
+      const layer = document.querySelector('.heart-layer');
+      layer.innerHTML = '';
+      for (let i = 0; i < 12; i += 1) {
+        const heart = document.createElement('span');
+        heart.className = 'heart';
+        heart.textContent = i % 2 === 0 ? '❤' : '💗';
+        heart.style.setProperty('--x', `${(Math.random() * 240 - 120).toFixed(0)}px`);
+        heart.style.setProperty('--y', `${(Math.random() * 180 - 40).toFixed(0)}px`);
+        heart.style.left = `${50 + (Math.random() * 16 - 8)}%`;
+        heart.style.top = `${54 + (Math.random() * 12 - 6)}%`;
+        heart.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
+        layer.appendChild(heart);
+      }
+    }
+
+    function openGift() {
+      if (isGiftOpened) return;
+      isGiftOpened = true;
+      giftBox.classList.add('opened');
+      createConfetti();
+      createHearts();
+      setTimeout(() => {
+        goToScreen('photoSection');
+      }, 1100);
+    }
+
+    function openLetter() {
+      if (isLetterOpened) return;
+      isLetterOpened = true;
+      envelope.classList.add('open');
+      letterMessage.classList.add('visible');
+    }
+
+    function updatePhotoSlide(index) {
+      const safeIndex = (index + photoSlides.length) % photoSlides.length;
+      photoSlides.forEach((slide, i) => slide.classList.toggle('active', i === safeIndex));
+      nextPhotoButton.textContent = safeIndex === photoSlides.length - 1 ? 'Buka Surat ❤️' : 'Lanjutkan';
+      prevPhotoButton.style.visibility = safeIndex === 0 ? 'hidden' : 'visible';
+
+      const dots = [...photoDots.children];
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === safeIndex));
+    }
+
+    function showNextPhoto() {
+      const current = photoSlides.findIndex(slide => slide.classList.contains('active'));
+      const nextIndex = current + 1;
+      updatePhotoSlide(nextIndex);
+
+      if (current === photoSlides.length - 1) {
+        goToScreen('letterSection');
+      }
+    }
+
+    function showPreviousPhoto() {
+      const current = photoSlides.findIndex(slide => slide.classList.contains('active'));
+      updatePhotoSlide(current - 1);
+    }
+
+    function createPhotoDots() {
+      photoDots.innerHTML = '';
+      photoSlides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Lihat foto ${index + 1}`);
+        dot.addEventListener('click', () => updatePhotoSlide(index));
+        photoDots.appendChild(dot);
+      });
+      updatePhotoSlide(0);
+    }
+
+    function selectFlower(card) {
+      flowerCards.forEach(item => item.classList.remove('open'));
+      card.classList.add('open');
+      chosenFlower = card.dataset.message;
+      finalButton.hidden = false;
+      finalButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function startMusic() {
+      if (!bgMusic.src) {
+        bgMusic.load();
+      }
+
+      return bgMusic.play().then(() => {
+        musicReady = true;
+        musicToggle.textContent = '🔇';
+        musicToggle.setAttribute('aria-label', 'Matikan musik');
+      }).catch(() => {
+        musicReady = false;
+        musicToggle.textContent = '🎵';
+        musicToggle.setAttribute('aria-label', 'Nyalakan musik');
+      });
+    }
+
+    function toggleMusic() {
+      if (bgMusic.paused) {
+        startMusic();
+      } else {
+        bgMusic.pause();
+        musicToggle.textContent = '🎵';
+        musicToggle.setAttribute('aria-label', 'Nyalakan musik');
+      }
+    }
+
+    function createFinalPetals() {
+      createPetals(finalPetals, 26);
+    }
+
+    startButton.addEventListener('click', () => goToScreen('giftSection'));
+
+    giftBox.addEventListener('click', openGift);
+    giftBox.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openGift();
+      }
+    });
+
+    showFlowerButton.addEventListener('click', () => goToScreen('flowerSection'));
+    prevPhotoButton.addEventListener('click', showPreviousPhoto);
+    nextPhotoButton.addEventListener('click', showNextPhoto);
+    finalButton.addEventListener('click', () => {
+      createFinalPetals();
+      goToScreen('finalSection');
+    });
+
+    envelope.addEventListener('click', openLetter);
+    envelope.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openLetter();
+      }
+    });
+
+    flowerCards.forEach(card => {
+      card.addEventListener('click', () => selectFlower(card));
+    });
+
+    backButton.addEventListener('click', goBack);
+    musicToggle.addEventListener('click', toggleMusic);
+    document.addEventListener('pointerdown', startMusic, { once: true });
+    document.addEventListener('touchstart', startMusic, { once: true });
+
+    window.addEventListener('load', () => {
+      updateConfig();
+      createPetals(petals, 20);
+      createAmbientEffects();
+      createPhotoDots();
+      startMusic();
+    });
+  </script>
+</body>
+</html>
