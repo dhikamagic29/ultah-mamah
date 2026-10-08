@@ -742,6 +742,111 @@
       margin: 28px 0 20px;
     }
 
+    .balloon-game {
+      position: relative;
+      width: min(100%, 520px);
+      height: min(62vw, 420px);
+      min-height: 300px;
+      margin: 16px auto 18px;
+      border-radius: 28px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,214,227,0.22));
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: inset 0 0 25px rgba(255,255,255,0.28);
+      touch-action: manipulation;
+    }
+
+    .balloon-zone {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .balloon {
+      position: absolute;
+      width: clamp(52px, 12vw, 74px);
+      height: clamp(60px, 14vw, 84px);
+      border: none;
+      border-radius: 52% 52% 48% 48% / 62% 62% 38% 38%;
+      background: radial-gradient(circle at 30% 25%, #fff, var(--balloon-color) 28%, var(--balloon-color) 65%, rgba(255,255,255,0.7) 100%);
+      box-shadow: inset -10px -6px 12px rgba(255,255,255,0.18), 0 8px 18px rgba(183,93,125,0.12);
+      cursor: pointer;
+      animation: balloonFloat 3.5s ease-in-out infinite alternate;
+      touch-action: manipulation;
+      transition: transform 0.12s ease, opacity 0.3s ease, filter 0.25s ease;
+    }
+
+    .balloon::before,
+    .balloon::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .balloon::before {
+      left: 50%;
+      bottom: -18px;
+      width: 2px;
+      height: 20px;
+      background: rgba(169,105,130,0.4);
+      transform: translateX(-50%);
+    }
+
+    .balloon::after {
+      left: 50%;
+      bottom: -6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transform: translateX(-50%);
+    }
+
+    .balloon:hover,
+    .balloon:focus-visible {
+      filter: brightness(1.08);
+    }
+
+    .balloon.popped {
+      opacity: 0;
+      transform: scale(1.5);
+      pointer-events: none;
+    }
+
+    .balloon.popped::after {
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 16px rgba(255,255,255,0.8);
+    }
+
+    .balloon-score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 12px auto 6px;
+      color: var(--rose);
+      font-weight: 700;
+    }
+
+    .balloon-score strong {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+
+    .balloon-card {
+      position: relative;
+      min-height: 200px;
+      padding: 18px 14px 14px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.52);
+      border-radius: 26px;
+      box-shadow: 0 14px 30px rgba(183,93,125,0.08);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      transform-style: preserve-3d;
+      touch-action: manipulation;
+      overflow: hidden;
+    }
+
     .flower-card {
       position: relative;
       min-height: 200px;
@@ -944,10 +1049,17 @@
       }
     }
 
+    @keyframes balloonFloat {
+      0% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+      100% { transform: translateY(3px) rotate(-2deg); }
+    }
+
     @media (max-width: 560px) {
       .container { padding-inline: 14px; }
       .screen { padding-inline: 12px; }
       .card { border-radius: 26px; }
+      .balloon-game { min-height: 260px; }
       .flowers { gap: 10px; }
       .flower-card { min-height: 178px; }
       .music-toggle { right: 12px; bottom: 15px; width: 54px; height: 54px; }
@@ -1122,7 +1234,25 @@
         </div>
 
         <div class="button-row">
-          <button class="btn" type="button" id="finalButton" hidden>Pesan Terakhir 💌</button>
+          <button class="btn" type="button" id="finalButton" hidden>Buka Surprise 🎁</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="balloonSection" aria-labelledby="balloon-title">
+      <div class="card">
+        <span class="eyebrow">Surprise kecil dari kami</span>
+        <h2 class="title" id="balloon-title" style="font-size: clamp(1.8rem, 6vw, 3rem); margin: 18px 0 6px;">Mamah, pecahkan balonnya! 🎈</h2>
+        <p class="subtitle" style="margin-bottom: 10px;">Pecahkan minimal 8 balon untuk membuka hadiah terakhir dari hati kami.</p>
+
+        <div class="balloon-score"><span>Nilai</span><strong id="balloonScore">0</strong><span>/ 10</span></div>
+        <div class="balloon-game" aria-live="polite">
+          <div class="balloon-zone" id="balloonZone"></div>
+        </div>
+
+        <div class="button-row">
+          <button class="btn secondary" type="button" id="resetBalloonButton">Ulangi</button>
+          <button class="btn" type="button" id="surpriseButton" hidden>Hadiah Surprise 🎁</button>
         </div>
       </div>
     </section>
@@ -1131,13 +1261,14 @@
       <div class="card final-card">
         <span class="eyebrow">Untuk Mamah</span>
         <h2 class="title" id="final-title">Untuk Mamah,<br />perempuan yang paling berharga dalam hidup kami.</h2>
-        <p>Semoga Mamah selalu sehat,</p>
-        <p>panjang umur,</p>
-        <p>bahagia,</p>
-        <p>dan selalu berada dalam lindungan Allah.</p>
-        <p>Terima kasih untuk semua cinta,</p>
-        <p>kesabaran, doa, dan pengorbanan Mamah.</p>
-        <p><strong>Kami sayang Mamah. ❤️</strong></p>
+        <p>Mamah adalah sosok yang selalu hadir dengan cinta, ketenangan, serta kasih sayang yang tak pernah berhenti.</p>
+        <p>Semua doa, nasihat, kebijaksanaan, dan pengorbanan Mamah telah menjadi tempat kami berlabuh ketika dunia terasa berat.</p>
+        <p>Dalam setiap langkah hidup kami, Mamah selalu menjadi teladan tentang kesabaran, kelembutan, dan keteguhan hati.</p>
+        <p>Semoga di hari yang baru ini, Mamah tetap diberikan kesehatan yang kuat, umur yang panjang, hati yang tenang, serta rezeki yang melimpah.</p>
+        <p>Semoga Allah selalu menjaga Mamah, membalas setiap kebaikan Mamah, dan memberkahi setiap langkah hidup Mamah.</p>
+        <p>Semoga Mamah selalu dikelilingi kebahagiaan, senyum yang hangat, dan orang-orang yang mencintai Mamah dengan tulus.</p>
+        <p>Terima kasih sudah menjadi Mamah yang luar biasa. Terima kasih atas semua cinta, perhatian, doa, dan pengorbanan yang tidak pernah Mamah hitung.</p>
+        <p><strong>Kami sentiasa sayang Mamah. ❤️</strong></p>
         <p class="signature">Barakallahu fii umrik, Mamah.</p>
       </div>
     </section>
@@ -1170,9 +1301,12 @@
     const bgMusic = document.getElementById('bgMusic');
     const startButton = document.getElementById('startButton');
     const giftBox = document.getElementById('giftBox');
-    const showLetterButton = document.getElementById('showLetterButton');
     const showFlowerButton = document.getElementById('showFlowerButton');
     const finalButton = document.getElementById('finalButton');
+    const surpriseButton = document.getElementById('surpriseButton');
+    const resetBalloonButton = document.getElementById('resetBalloonButton');
+    const balloonZone = document.getElementById('balloonZone');
+    const balloonScore = document.getElementById('balloonScore');
     const envelope = document.getElementById('envelope');
     const letterMessage = document.getElementById('letterMessage');
     const flowerCards = document.querySelectorAll('.flower-card');
@@ -1403,6 +1537,48 @@
       createPetals(finalPetals, 26);
     }
 
+    function createBalloonGame() {
+      balloonZone.innerHTML = '';
+      const colors = ['#ff8db4', '#ffb6c8', '#f7c6a8', '#c8a0ff', '#9dd9c5', '#ffd766'];
+      const totalBalloons = 10;
+      let score = 0;
+
+      for (let i = 0; i < totalBalloons; i += 1) {
+        const balloon = document.createElement('button');
+        balloon.type = 'button';
+        balloon.className = 'balloon';
+        balloon.title = 'Pecahkan balon';
+        balloon.style.setProperty('--balloon-color', colors[i % colors.length]);
+        balloon.style.left = `${5 + Math.random() * 82}%`;
+        balloon.style.top = `${30 + Math.random() * 52}%`;
+        balloon.style.animationDelay = `${(Math.random() * 1.2).toFixed(2)}s`;
+
+        balloon.addEventListener('click', () => {
+          if (balloon.classList.contains('popped')) return;
+          balloon.classList.add('popped');
+          score += 1;
+          balloonScore.textContent = score;
+
+          if (score >= 8) {
+            surpriseButton.hidden = false;
+            surpriseButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+
+        balloonZone.appendChild(balloon);
+      }
+
+      balloonScore.textContent = '0';
+      surpriseButton.hidden = true;
+      return score;
+    }
+
+    function resetBalloonGame() {
+      createBalloonGame();
+      surpriseButton.hidden = true;
+      balloonScore.textContent = '0';
+    }
+
     startButton.addEventListener('click', () => goToScreen('giftSection'));
 
     giftBox.addEventListener('click', openGift);
@@ -1417,9 +1593,13 @@
     prevPhotoButton.addEventListener('click', showPreviousPhoto);
     nextPhotoButton.addEventListener('click', showNextPhoto);
     finalButton.addEventListener('click', () => {
+      goToScreen('balloonSection');
+    });
+    surpriseButton.addEventListener('click', () => {
       createFinalPetals();
       goToScreen('finalSection');
     });
+    resetBalloonButton.addEventListener('click', resetBalloonGame);
 
     envelope.addEventListener('click', openLetter);
     envelope.addEventListener('keydown', event => {
@@ -1443,6 +1623,7 @@
       createPetals(petals, 20);
       createAmbientEffects();
       createPhotoDots();
+      resetBalloonGame();
       startMusic();
     });
   </script>
