@@ -1394,6 +1394,9 @@
         <p>Terima kasih sudah menjadi Mamah yang luar biasa. Terima kasih atas semua cinta, perhatian, doa, dan pengorbanan yang tidak pernah Mamah hitung.</p>
         <p><strong>Kami sentiasa sayang Mamah. ❤️</strong></p>
         <p class="signature">Barakallahu fii umrik, Mamah.</p>
+        <div class="button-row">
+          <button class="btn secondary" type="button" id="finalMusicButton" hidden>Putar musik untuk ucapan ▶</button>
+        </div>
       </div>
     </section>
   </main>
@@ -1438,6 +1441,7 @@
     const photoQuizOptions = document.getElementById('photoQuizOptions');
     const quizFeedback = document.getElementById('quizFeedback');
     const quizContinueButton = document.getElementById('quizContinueButton');
+    const finalMusicButton = document.getElementById('finalMusicButton');
     const balloonZone = document.getElementById('balloonZone');
     const balloonScore = document.getElementById('balloonScore');
     const envelope = document.getElementById('envelope');
@@ -1459,6 +1463,7 @@
     let isLetterOpened = false;
     let chosenFlower = null;
     let musicReady = false;
+    let musicFadeTimer = null;
     let giftLayerStep = 0;
     let memorySelection = [];
     let memoryMatches = 0;
@@ -1480,6 +1485,7 @@
       photoImage.src = config.photo;
       photoImage.alt = `Foto ${config.name}`;
       bgMusic.querySelector('source').src = config.music;
+      bgMusic.volume = 0.68;
       openingTitle.innerHTML = `Untuk ${config.name} Tersayang <span aria-hidden="true">❤️</span>`;
       giftTitle.textContent = `Ada sesuatu untuk ${config.name}...`;
       flowerTitle.textContent = `Terakhir... ${config.name} pilih satu bunga 🌷`;
@@ -1645,19 +1651,36 @@
     }
 
     function startMusic() {
-      if (!bgMusic.src) {
-        bgMusic.load();
-      }
-
       return bgMusic.play().then(() => {
         musicReady = true;
         musicToggle.textContent = '🔇';
         musicToggle.setAttribute('aria-label', 'Matikan musik');
+        finalMusicButton.hidden = true;
+        return true;
       }).catch(() => {
         musicReady = false;
         musicToggle.textContent = '🎵';
         musicToggle.setAttribute('aria-label', 'Nyalakan musik');
+        return false;
       });
+    }
+
+    async function startFinaleMusic() {
+      clearInterval(musicFadeTimer);
+      const startingVolume = Math.min(bgMusic.volume, 0.68);
+      bgMusic.volume = startingVolume;
+      const playing = await startMusic();
+      if (!playing) {
+        finalMusicButton.hidden = false;
+        return;
+      }
+
+      let fadeStep = 0;
+      musicFadeTimer = setInterval(() => {
+        fadeStep += 1;
+        bgMusic.volume = Math.min(1, startingVolume + ((1 - startingVolume) * fadeStep / 12));
+        if (fadeStep >= 12) clearInterval(musicFadeTimer);
+      }, 120);
     }
 
     function toggleMusic() {
@@ -1854,7 +1877,9 @@
     quizContinueButton.addEventListener('click', () => {
       createFinalPetals();
       goToScreen('finalSection');
+      startFinaleMusic();
     });
+    finalMusicButton.addEventListener('click', startFinaleMusic);
 
     envelope.addEventListener('click', openLetter);
     envelope.addEventListener('keydown', event => {
