@@ -1402,7 +1402,7 @@
   </main>
 
   <button class="nav-back" type="button" id="backButton" aria-label="Kembali">←</button>
-  <button class="music-toggle" type="button" id="musicToggle" aria-label="Matikan musik">🔇</button>
+  <button class="music-toggle" type="button" id="musicToggle" aria-label="Nyalakan musik" aria-pressed="false">▶</button>
 
   <audio id="bgMusic" loop autoplay preload="auto" playsinline>
     <!-- MUSIK DI SINI -->
@@ -1652,17 +1652,22 @@
 
     function startMusic() {
       return bgMusic.play().then(() => {
-        musicReady = true;
-        musicToggle.textContent = '🔇';
-        musicToggle.setAttribute('aria-label', 'Matikan musik');
+        syncMusicControls();
         finalMusicButton.hidden = true;
         return true;
       }).catch(() => {
-        musicReady = false;
-        musicToggle.textContent = '🎵';
-        musicToggle.setAttribute('aria-label', 'Nyalakan musik');
+        syncMusicControls();
         return false;
       });
+    }
+
+    function syncMusicControls() {
+      const isPlaying = !bgMusic.paused && !bgMusic.ended;
+      musicReady = isPlaying;
+      musicToggle.textContent = isPlaying ? '🔊' : '▶';
+      musicToggle.setAttribute('aria-label', isPlaying ? 'Matikan musik' : 'Nyalakan musik');
+      musicToggle.setAttribute('aria-pressed', String(isPlaying));
+      if (isPlaying) finalMusicButton.hidden = true;
     }
 
     async function startFinaleMusic() {
@@ -1685,11 +1690,14 @@
 
     function toggleMusic() {
       if (bgMusic.paused) {
-        startMusic();
+        startMusic().then(playing => {
+          if (!playing && document.getElementById('finalSection').classList.contains('active')) {
+            finalMusicButton.hidden = false;
+          }
+        });
       } else {
         bgMusic.pause();
-        musicToggle.textContent = '🎵';
-        musicToggle.setAttribute('aria-label', 'Nyalakan musik');
+        syncMusicControls();
       }
     }
 
@@ -1843,11 +1851,16 @@
     }
 
     startButton.addEventListener('click', () => goToScreen('giftSection'));
+    startButton.addEventListener('click', startMusic);
 
-    giftBox.addEventListener('click', openGift);
+    giftBox.addEventListener('click', () => {
+      startMusic();
+      openGift();
+    });
     giftBox.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
+        startMusic();
         openGift();
       }
     });
@@ -1895,8 +1908,15 @@
 
     backButton.addEventListener('click', goBack);
     musicToggle.addEventListener('click', toggleMusic);
-    document.addEventListener('pointerdown', startMusic, { once: true });
-    document.addEventListener('touchstart', startMusic, { once: true });
+    bgMusic.addEventListener('play', syncMusicControls);
+    bgMusic.addEventListener('pause', syncMusicControls);
+    bgMusic.addEventListener('ended', syncMusicControls);
+    document.addEventListener('pointerdown', () => {
+      if (bgMusic.paused) startMusic();
+    });
+    document.addEventListener('touchstart', () => {
+      if (bgMusic.paused) startMusic();
+    }, { passive: true });
 
     window.addEventListener('load', () => {
       updateConfig();
